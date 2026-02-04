@@ -144,12 +144,8 @@ Agents must:
 
 Reference Material
 
-For UI polish and performance reminders, consult docs/notes/ui-performance.md and docs/notes/ui.md when the work touches those areas.
-
-
-Additional Reference Material
-
-Backend and platform reminders live in docs/notes/backend.md.
-
-Ops reminders live in docs/notes/ops.md.
+- UI polish/performance updates: consult docs/notes/ui-performance.md and docs/notes/ui.md whenever you are tuning the experience, visuals, or responsiveness.
+- Backend/platform work: consult docs/notes/backend.md before touching file scanning, integration, or persistence layers.
+- Ops practices: consult docs/notes/ops.md for logging, testing focus, and anti-goals before adding new tooling or workflows.
+- Technology stack: consult docs/notes/tech-stack.md when shaping overall architecture or choosing which layer owns a capability.
 
