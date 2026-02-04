@@ -110,3 +110,34 @@ Users should not need to configure:
 - Emulator detection
 - Game scanning
 - Storefront imports
+
+9. Decision Guidelines
+
+When uncertain, agents must prefer solutions that:
+1. Reduce user overwhelm
+2. Preserve UI calmness
+3. Improve reliability
+4. Maintain cross-platform parity
+5. Keep architecture simple
+
+⸻
+
+10. Future-Safe Design
+
+Agents should assume Clair may expand to:
+- Cloud sync
+- Multi-device continuity
+- Plugin ecosystem
+- Save-file management
+
+Architecture should remain extensible without premature complexity.
+
+⸻
+
+11. Contribution Behavior
+
+Agents must:
+- Maintain consistent code style
+- Avoid introducing experimental dependencies
+- Document non-obvious logic
+- Preserve platform compatibility
