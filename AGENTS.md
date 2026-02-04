@@ -136,6 +136,11 @@ Architecture should remain extensible without premature complexity.
 
 11. Contribution Behavior
 
+Reference Material
+
+For UI polish and performance reminders, consult docs/notes/ui-performance.md when the work touches those areas.
+
+
 Agents must:
 - Maintain consistent code style
 - Avoid introducing experimental dependencies
