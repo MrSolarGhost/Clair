@@ -150,3 +150,6 @@ For UI polish and performance reminders, consult docs/notes/ui-performance.md an
 Additional Reference Material
 
 Backend and platform reminders live in docs/notes/backend.md.
+
+Ops reminders live in docs/notes/ops.md.
+
