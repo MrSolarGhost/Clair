@@ -145,3 +145,8 @@ Agents must:
 Reference Material
 
 For UI polish and performance reminders, consult docs/notes/ui-performance.md and docs/notes/ui.md when the work touches those areas.
+
+
+Additional Reference Material
+
+Backend and platform reminders live in docs/notes/backend.md.
