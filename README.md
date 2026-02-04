@@ -2,7 +2,7 @@ this is the readme of the updated project btw
 
 # Clair
 
-Clair is a controller-first game frontend for Android and PC that feels like a console OS.
+Clair is a controller-first game frontend for Android handhelds, Windows, Mac, and Linux that feels like a console OS.
 It helps you decide what to play, keep track of progress, and stay inside a calm, focused gaming space.
 
 Clair is a frontend only.
