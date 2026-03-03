@@ -67,4 +67,33 @@ class SteamGridDBService {
     
     return covers;
   }
+
+  /// Quick fetch: search + get best cover with short timeout
+  /// Returns null if timeout or no results
+  Future<String?> quickFetch(String gameName, {String? platform}) async {
+    try {
+      // Search for game
+      final searchResults = await search(gameName);
+      if (searchResults.isEmpty) {
+        return null;
+      }
+
+      // Get covers for first result (best match)
+      final gameId = searchResults.first['id'] as int;
+      final covers = await getCovers(gameId);
+      
+      if (covers.isEmpty) {
+        return null;
+      }
+
+      // Return best cover (already sorted by score)
+      return covers.first['url'] as String?;
+    } on TimeoutException {
+      return null;
+    } catch (e) {
+      // Log error but don't throw - graceful failure
+      print('QuickFetch failed: $e');
+      return null;
+    }
+  }
 }

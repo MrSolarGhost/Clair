@@ -71,5 +71,42 @@ void main() {
       expect(covers[1]['score'], 8);
       expect(covers[2]['score'], 5);
     });
+
+    test('quickFetch returns best cover URL with short timeout', () async {
+      final mockClient = MockClient((request) async {
+        if (request.url.path.contains('search')) {
+          return http.Response(
+            '{"success": true, "data": [{"id": 123, "name": "Test Game"}]}',
+            200,
+          );
+        } else {
+          return http.Response(
+            '{"success": true, "data": [{"id": 1, "url": "https://example.com/best.jpg", "score": 10}]}',
+            200,
+          );
+        }
+      });
+
+      final service = SteamGridDBService(client: mockClient, apiKey: 'test-key');
+      final coverUrl = await service.quickFetch('Test Game');
+
+      expect(coverUrl, 'https://example.com/best.jpg');
+    });
+
+    test('quickFetch returns null on timeout', () async {
+      final mockClient = MockClient((request) async {
+        await Future.delayed(Duration(seconds: 5));
+        return http.Response('{}', 200);
+      });
+
+      final service = SteamGridDBService(
+        client: mockClient,
+        apiKey: 'test-key',
+        timeout: Duration(seconds: 2),
+      );
+
+      final coverUrl = await service.quickFetch('Test Game');
+      expect(coverUrl, isNull);
+    });
   });
 }
