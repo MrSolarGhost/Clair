@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import '../models/game.dart';
 import '../models/collection.dart';
 import '../models/achievement.dart';
+import 'cover_orchestrator.dart';
 
 /// Manages local SQLite database for games, collections, and achievements
 class DatabaseService {
@@ -130,7 +131,14 @@ class DatabaseService {
   /// Insert a new game
   Future<int> insertGame(Game game) async {
     final db = await database;
-    return await db.insert('games', game.toMap());
+    final id = await db.insert('games', game.toMap());
+    
+    // Trigger cover fetch for new game
+    final gameWithId = game.copyWith(id: id);
+    final orchestrator = CoverOrchestrator();
+    orchestrator.onGameAdded(gameWithId);
+    
+    return id;
   }
 
   /// Get a single game by ID
