@@ -45,3 +45,16 @@ For automatic game cover art:
 4. Click "Save API Key"
 
 Covers will automatically download when you add games, or use "Get Game Covers" to batch-fetch all missing covers.
+
+### Library Directories
+
+Automatically import games from your ROM/game directories:
+
+1. Open Settings → Library Directories
+2. Click "Add Directory"
+3. Select the folder containing your games
+4. Choose the platform (PS Vita, Nintendo 3DS, etc.)
+5. Enable "Include subdirectories" if your games are organized in subfolders
+6. Click "Scan & Import"
+
+Clair will scan for game files and add them to your library. Use "Refresh" to detect new or removed games.
