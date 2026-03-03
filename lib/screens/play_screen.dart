@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/game.dart';
+import '../services/database_service.dart';
 
 class PlayScreen extends StatefulWidget {
   const PlayScreen({super.key});
@@ -32,74 +33,18 @@ class _PlayScreenState extends State<PlayScreen> {
   Future<void> _loadGames() async {
     setState(() => _isLoading = true);
 
-    // Mock data for visual development
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    final mockGames = [
-      Game(
-        title: 'The Legend of Zelda: Breath of the Wild',
-        system: 'Nintendo Switch',
-        genre: 'Action-Adventure',
-        status: GameStatus.playing,
-        playTimeMinutes: 2340,
-      ),
-      Game(
-        title: 'Celeste',
-        system: 'PC',
-        genre: 'Platformer',
-        status: GameStatus.completed,
-        playTimeMinutes: 720,
-        completionPercentage: 100.0,
-      ),
-      Game(
-        title: 'Hollow Knight',
-        system: 'PC',
-        genre: 'Metroidvania',
-        status: GameStatus.playing,
-        playTimeMinutes: 1560,
-        completionPercentage: 85.0,
-      ),
-      Game(
-        title: 'Super Mario Odyssey',
-        system: 'Nintendo Switch',
-        genre: 'Platformer',
-        status: GameStatus.beaten,
-        playTimeMinutes: 900,
-      ),
-      Game(
-        title: 'Elden Ring',
-        system: 'PC',
-        genre: 'Action RPG',
-        status: GameStatus.unplayed,
-      ),
-      Game(
-        title: 'Hades',
-        system: 'PC',
-        genre: 'Roguelike',
-        status: GameStatus.completed,
-        playTimeMinutes: 3600,
-        isFavorite: true,
-      ),
-      Game(
-        title: 'Metroid Prime',
-        system: 'GameCube',
-        genre: 'Action-Adventure',
-        status: GameStatus.beaten,
-        playTimeMinutes: 780,
-      ),
-      Game(
-        title: 'Portal 2',
-        system: 'PC',
-        genre: 'Puzzle',
-        status: GameStatus.completed,
-        playTimeMinutes: 480,
-      ),
-    ];
+    final dbService = DatabaseService.instance;
+    final allGames = await dbService.getAllGames();
+    
+    // Filter out missing files by default
+    final availableGames = allGames.where((g) => g.fileStatus == 0).toList();
 
     setState(() {
-      _games = mockGames;
+      _games = availableGames;
       _isLoading = false;
-      _selectedGameIndex = 0;
+      if (_games.isNotEmpty && _selectedGameIndex >= _games.length) {
+        _selectedGameIndex = 0;
+      }
     });
   }
 

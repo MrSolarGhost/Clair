@@ -12,6 +12,7 @@ class Game {
   final DateTime addedDate;
   final bool isFavorite;
   final double? completionPercentage;
+  final int fileStatus;
 
   Game({
     this.id,
@@ -26,6 +27,7 @@ class Game {
     DateTime? addedDate,
     this.isFavorite = false,
     this.completionPercentage,
+    this.fileStatus = 0,
   }) : addedDate = addedDate ?? DateTime.now();
 
   /// Convert Game to Map for SQLite storage
@@ -43,6 +45,7 @@ class Game {
       'addedDate': addedDate.millisecondsSinceEpoch,
       'isFavorite': isFavorite ? 1 : 0,
       'completionPercentage': completionPercentage,
+      'file_status': fileStatus,
     };
   }
 
@@ -63,6 +66,7 @@ class Game {
       addedDate: DateTime.fromMillisecondsSinceEpoch(map['addedDate'] as int),
       isFavorite: map['isFavorite'] == 1,
       completionPercentage: map['completionPercentage'] as double?,
+      fileStatus: map['file_status'] as int? ?? 0,
     );
   }
 
@@ -80,6 +84,7 @@ class Game {
     DateTime? addedDate,
     bool? isFavorite,
     double? completionPercentage,
+    int? fileStatus,
   }) {
     return Game(
       id: id ?? this.id,
@@ -94,6 +99,7 @@ class Game {
       addedDate: addedDate ?? this.addedDate,
       isFavorite: isFavorite ?? this.isFavorite,
       completionPercentage: completionPercentage ?? this.completionPercentage,
+      fileStatus: fileStatus ?? this.fileStatus,
     );
   }
 }
