@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import '../models/game.dart';
 import '../models/collection.dart';
 import '../models/achievement.dart';
+import '../models/library_directory.dart';
 import 'cover_orchestrator.dart';
 
 /// Manages local SQLite database for games, collections, and achievements
@@ -434,6 +435,91 @@ class DatabaseService {
       'achievements',
       where: 'id = ?',
       whereArgs: [id],
+    );
+  }
+
+  // ============================================================
+  // Library Directories
+  // ============================================================
+
+  /// Insert a library directory
+  Future<int> insertLibraryDirectory(LibraryDirectory directory) async {
+    final db = await database;
+    return await db.insert('library_directories', directory.toMap());
+  }
+
+  /// Get library directory by ID
+  Future<LibraryDirectory?> getLibraryDirectory(int id) async {
+    final db = await database;
+    final maps = await db.query(
+      'library_directories',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isEmpty) return null;
+    return LibraryDirectory.fromMap(maps.first);
+  }
+
+  /// Get all library directories
+  Future<List<LibraryDirectory>> getAllLibraryDirectories() async {
+    final db = await database;
+    final maps = await db.query('library_directories', orderBy: 'created_at DESC');
+    return maps.map((map) => LibraryDirectory.fromMap(map)).toList();
+  }
+
+  /// Update library directory
+  Future<void> updateLibraryDirectory(LibraryDirectory directory) async {
+    final db = await database;
+    await db.update(
+      'library_directories',
+      directory.toMap(),
+      where: 'id = ?',
+      whereArgs: [directory.id],
+    );
+  }
+
+  /// Delete library directory
+  Future<void> deleteLibraryDirectory(int id) async {
+    final db = await database;
+    await db.delete(
+      'library_directories',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  /// Get games by source directory
+  Future<List<Game>> getGamesBySourceDirectory(int directoryId) async {
+    final db = await database;
+    final maps = await db.query(
+      'games',
+      where: 'source_directory_id = ?',
+      whereArgs: [directoryId],
+      orderBy: 'title ASC',
+    );
+    return maps.map((map) => Game.fromMap(map)).toList();
+  }
+
+  /// Mark game as missing
+  Future<void> markGameMissing(int gameId) async {
+    final db = await database;
+    await db.update(
+      'games',
+      {'file_status': 1},
+      where: 'id = ?',
+      whereArgs: [gameId],
+    );
+  }
+
+  /// Mark game as available
+  Future<void> markGameAvailable(int gameId) async {
+    final db = await database;
+    await db.update(
+      'games',
+      {'file_status': 0},
+      where: 'id = ?',
+      whereArgs: [gameId],
     );
   }
 
