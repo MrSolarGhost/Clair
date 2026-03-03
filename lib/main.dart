@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
+import 'screens/settings_screen.dart';
 import 'services/input_service.dart';
 
 Future<void> main() async {
@@ -51,6 +52,9 @@ class ClairApp extends StatelessWidget {
           ),
         ),
         home: const HomeScreen(),
+        routes: {
+          '/settings': (context) => const SettingsScreen(),
+        },
       ),
     );
   }
