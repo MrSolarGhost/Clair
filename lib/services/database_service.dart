@@ -133,6 +133,19 @@ class DatabaseService {
     return await db.insert('games', game.toMap());
   }
 
+  /// Get a single game by ID
+  Future<Game?> getGame(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'games',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (maps.isEmpty) return null;
+    return Game.fromMap(maps.first);
+  }
+
   /// Get all games
   Future<List<Game>> getAllGames() async {
     final db = await database;

@@ -1,9 +1,20 @@
 import 'package:sqflite/sqflite.dart';
+import 'steamgriddb_service.dart';
+import 'cover_storage_service.dart';
+import 'database_service.dart';
 
 class CoverFetchQueue {
   final Database db;
+  final SteamGridDBService? steamGridDB;
+  final CoverStorageService? storage;
+  final DatabaseService? gameService;
 
-  CoverFetchQueue({required this.db});
+  CoverFetchQueue({
+    required this.db,
+    this.steamGridDB,
+    this.storage,
+    this.gameService,
+  });
 
   /// Add game to fetch queue
   Future<void> add({required int gameId}) async {
@@ -68,5 +79,60 @@ class CoverFetchQueue {
       where: 'game_id = ?',
       whereArgs: [gameId],
     );
+  }
+
+  /// Process pending queue items
+  Future<void> processQueue() async {
+    if (steamGridDB == null || storage == null || gameService == null) {
+      print('Queue processor not fully initialized');
+      return;
+    }
+
+    final pending = await getPending();
+    
+    for (final item in pending) {
+      final gameId = item['game_id'] as int;
+      
+      try {
+        // Get game details for search
+        final game = await gameService!.getGame(gameId);
+        if (game == null) {
+          await markCompleted(gameId: gameId);
+          continue;
+        }
+
+        // Fetch cover
+        final coverUrl = await steamGridDB!.quickFetch(
+          game.title,
+          platform: game.system,
+        );
+
+        if (coverUrl == null) {
+          await markFailed(gameId: gameId, error: 'No cover found');
+          continue;
+        }
+
+        // Download and save
+        final coverPath = await storage!.downloadCover(
+          coverUrl,
+          gameId: gameId,
+        );
+
+        if (coverPath == null) {
+          await markFailed(gameId: gameId, error: 'Download failed');
+          continue;
+        }
+
+        // Update game
+        await gameService!.updateGame(
+          game.copyWith(coverPath: coverPath),
+        );
+
+        // Remove from queue
+        await markCompleted(gameId: gameId);
+      } catch (e) {
+        await markFailed(gameId: gameId, error: e.toString());
+      }
+    }
   }
 }
