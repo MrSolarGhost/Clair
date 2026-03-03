@@ -26,7 +26,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -48,7 +48,10 @@ class DatabaseService {
         playTimeMinutes INTEGER NOT NULL DEFAULT 0,
         addedDate INTEGER NOT NULL,
         isFavorite INTEGER NOT NULL DEFAULT 0,
-        completionPercentage REAL
+        completionPercentage REAL,
+        source_directory_id INTEGER,
+        file_status INTEGER DEFAULT 0,
+        FOREIGN KEY (source_directory_id) REFERENCES library_directories (id) ON DELETE SET NULL
       )
     ''');
 
@@ -101,6 +104,18 @@ class DatabaseService {
       )
     ''');
 
+    // Library directories table
+    await db.execute('''
+      CREATE TABLE library_directories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        path TEXT NOT NULL,
+        system TEXT NOT NULL,
+        scan_recursive INTEGER NOT NULL,
+        last_scanned_at INTEGER,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
     // Create indices for better query performance
     await db.execute('CREATE INDEX idx_games_status ON games(status)');
     await db.execute('CREATE INDEX idx_games_system ON games(system)');
@@ -123,6 +138,24 @@ class DatabaseService {
           FOREIGN KEY (game_id) REFERENCES games (id) ON DELETE CASCADE
         )
       ''');
+    }
+    
+    if (oldVersion < 3) {
+      // Add library directories table
+      await db.execute('''
+        CREATE TABLE library_directories (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          path TEXT NOT NULL,
+          system TEXT NOT NULL,
+          scan_recursive INTEGER NOT NULL,
+          last_scanned_at INTEGER,
+          created_at INTEGER NOT NULL
+        )
+      ''');
+      
+      // Add new columns to games table
+      await db.execute('ALTER TABLE games ADD COLUMN source_directory_id INTEGER');
+      await db.execute('ALTER TABLE games ADD COLUMN file_status INTEGER DEFAULT 0');
     }
   }
 
