@@ -30,3 +30,18 @@ Clair is **controller-first**, but fully supports touch.
 - Touch interaction moves focus to the touched element, so controller use can continue seamlessly.
 
 - Gestures are optional and never required.
+
+---
+
+## Setup
+
+### SteamGridDB Configuration (Optional)
+
+For automatic game cover art:
+
+1. Get a free API key from https://www.steamgriddb.com/profile/preferences/api
+2. Open Settings in the app
+3. Enter your API key under "SteamGridDB API Key"
+4. Click "Save API Key"
+
+Covers will automatically download when you add games, or use "Get Game Covers" to batch-fetch all missing covers.
