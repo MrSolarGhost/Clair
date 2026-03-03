@@ -156,6 +156,18 @@ class DatabaseService {
     return maps.map((map) => Game.fromMap(map)).toList();
   }
 
+  /// Get games without covers
+  Future<List<Game>> getGamesWithoutCovers() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'games',
+      where: 'coverPath IS NULL OR coverPath = ?',
+      whereArgs: [''],
+      orderBy: 'title ASC',
+    );
+    return maps.map((map) => Game.fromMap(map)).toList();
+  }
+
   /// Get games by status
   Future<List<Game>> getGamesByStatus(GameStatus status) async {
     final db = await database;
