@@ -15,23 +15,24 @@ class CoverPickerScreen extends StatefulWidget {
 }
 
 class _CoverPickerScreenState extends State<CoverPickerScreen> {
+  List<Map<String, dynamic>> _searchResults = [];
   List<Map<String, dynamic>> _covers = [];
   bool _isLoading = true;
+  bool _showingCovers = false;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadCovers();
+    _searchGames();
   }
 
-  Future<void> _loadCovers() async {
+  Future<void> _searchGames() async {
     try {
       final service = SteamGridDBService(
         apiKey: dotenv.env['STEAMGRIDDB_API_KEY'] ?? '',
       );
 
-      // Search for game
       final results = await service.search(widget.game.title);
       if (results.isEmpty) {
         setState(() {
@@ -41,10 +42,33 @@ class _CoverPickerScreenState extends State<CoverPickerScreen> {
         return;
       }
 
-      // Get covers for first result
-      final covers = await service.getCovers(results.first['id']);
+      setState(() {
+        _searchResults = results;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadCovers(int gameId) async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final service = SteamGridDBService(
+        apiKey: dotenv.env['STEAMGRIDDB_API_KEY'] ?? '',
+      );
+
+      final covers = await service.getCovers(gameId);
       setState(() {
         _covers = covers;
+        _showingCovers = true;
         _isLoading = false;
       });
     } catch (e) {
@@ -78,7 +102,18 @@ class _CoverPickerScreenState extends State<CoverPickerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Cover - ${widget.game.title}'),
+        title: Text(_showingCovers ? 'Choose Cover' : 'Select Game'),
+        leading: _showingCovers
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  setState(() {
+                    _showingCovers = false;
+                    _covers = [];
+                  });
+                },
+              )
+            : null,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -95,39 +130,55 @@ class _CoverPickerScreenState extends State<CoverPickerScreen> {
                             _isLoading = true;
                             _error = null;
                           });
-                          _loadCovers();
+                          _searchGames();
                         },
                         child: const Text('Retry'),
                       ),
                     ],
                   ),
                 )
-              : GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2 / 3,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemCount: _covers.length,
-                  itemBuilder: (context, index) {
-                    final cover = _covers[index];
-                    return GestureDetector(
-                      onTap: () => _selectCover(cover['url']),
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.network(
-                          cover['url'],
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(child: Icon(Icons.error));
-                          },
-                        ),
+              : _showingCovers
+                  ? GridView.builder(
+                      padding: const EdgeInsets.all(16),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 2 / 3,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
                       ),
-                    );
-                  },
-                ),
+                      itemCount: _covers.length,
+                      itemBuilder: (context, index) {
+                        final cover = _covers[index];
+                        return GestureDetector(
+                          onTap: () => _selectCover(cover['url']),
+                          child: Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.network(
+                              cover['url'],
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Center(child: Icon(Icons.error));
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _searchResults.length,
+                      itemBuilder: (context, index) {
+                        final game = _searchResults[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(game['name']),
+                            subtitle: Text('ID: ${game['id']}'),
+                            trailing: const Icon(Icons.arrow_forward),
+                            onTap: () => _loadCovers(game['id']),
+                          ),
+                        );
+                      },
+                    ),
     );
   }
 }
