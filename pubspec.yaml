@@ -49,6 +49,7 @@ dependencies:
   
   # Platform integration
   url_launcher: ^6.2.2  # Launch external apps/emulators
+  file_picker: ^8.1.6  # File and directory picker
   
   # API integration
   http: ^1.1.0  # HTTP requests

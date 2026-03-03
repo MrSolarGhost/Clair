@@ -6,6 +6,7 @@ import '../services/database_service.dart';
 import '../services/cover_fetch_queue.dart';
 import '../services/steamgriddb_service.dart';
 import '../services/cover_storage_service.dart';
+import 'library_directories_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -221,6 +222,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Get Game Covers'),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              'Library Directories',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Automatically import games from your ROM and game directories',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LibraryDirectoriesScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.folder_open),
+              label: const Text('Manage Directories'),
             ),
           ],
         ),
