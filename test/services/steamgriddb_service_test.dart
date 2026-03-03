@@ -39,5 +39,37 @@ void main() {
         throwsA(isA<TimeoutException>()),
       );
     });
+
+    test('getCovers returns cover URLs', () async {
+      final mockClient = MockClient((request) async {
+        return http.Response(
+          '{"success": true, "data": [{"id": 1, "url": "https://example.com/cover.jpg", "score": 10}]}',
+          200,
+        );
+      });
+
+      final service = SteamGridDBService(client: mockClient, apiKey: 'test-key');
+      final covers = await service.getCovers(123);
+
+      expect(covers, isNotEmpty);
+      expect(covers.first['url'], 'https://example.com/cover.jpg');
+      expect(covers.first['score'], 10);
+    });
+
+    test('getCovers sorts by score', () async {
+      final mockClient = MockClient((request) async {
+        return http.Response(
+          '{"success": true, "data": [{"id": 1, "score": 5}, {"id": 2, "score": 10}, {"id": 3, "score": 8}]}',
+          200,
+        );
+      });
+
+      final service = SteamGridDBService(client: mockClient, apiKey: 'test-key');
+      final covers = await service.getCovers(123);
+
+      expect(covers[0]['score'], 10); // Highest first
+      expect(covers[1]['score'], 8);
+      expect(covers[2]['score'], 5);
+    });
   });
 }

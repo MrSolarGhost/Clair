@@ -36,4 +36,35 @@ class SteamGridDBService {
 
     return List<Map<String, dynamic>>.from(data['data'] ?? []);
   }
+
+  /// Get cover art for a game
+  /// Returns covers sorted by score (best first)
+  Future<List<Map<String, dynamic>>> getCovers(int gameId) async {
+    final uri = Uri.parse('$baseUrl/grids/game/$gameId').replace(
+      queryParameters: {'dimensions': '600x900'},
+    );
+
+    final response = await client
+        .get(
+          uri,
+          headers: {'Authorization': 'Bearer $apiKey'},
+        )
+        .timeout(timeout);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get covers: ${response.statusCode}');
+    }
+
+    final data = json.decode(response.body);
+    if (data['success'] != true) {
+      throw Exception('API returned error');
+    }
+
+    final covers = List<Map<String, dynamic>>.from(data['data'] ?? []);
+    
+    // Sort by score (highest first)
+    covers.sort((a, b) => (b['score'] ?? 0).compareTo(a['score'] ?? 0));
+    
+    return covers;
+  }
 }
