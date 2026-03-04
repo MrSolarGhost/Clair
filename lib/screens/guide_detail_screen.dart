@@ -587,7 +587,7 @@ Thank you for reading this guide. For more information, visit the official resou
   }
 
   void _saveProgress() {
-    // TODO: Save progress to database
+    // TODO: Persist guide progress (page/scroll) to database when storage model/service exists.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Progress saved: ${_getProgressText()}'),
