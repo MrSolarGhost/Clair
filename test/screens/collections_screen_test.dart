@@ -4,6 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:clair/screens/collections_screen.dart';
 import 'package:clair/services/collections_service.dart';
 import 'package:clair/services/database_service.dart';
+import 'package:clair/models/game.dart';
 
 void main() {
   setUpAll(() {
@@ -105,19 +106,12 @@ void main() {
       final collectionId = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add test games
-      final db = await dbService.database;
-      final gameId1 = await db.insert('games', {
-        'title': 'Game 1',
-        'system': 'PC',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
-      final gameId2 = await db.insert('games', {
-        'title': 'Game 2',
-        'system': 'PC',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      final gameId1 = await dbService.insertGame(
+        Game(title: 'Game 1', system: 'PC', status: GameStatus.unplayed),
+      );
+      final gameId2 = await dbService.insertGame(
+        Game(title: 'Game 2', system: 'PC', status: GameStatus.unplayed),
+      );
 
       await service.addGameToCollection(collectionId, gameId1);
       await service.addGameToCollection(collectionId, gameId2);

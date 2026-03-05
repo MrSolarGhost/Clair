@@ -141,7 +141,7 @@ void main() {
       final game = Game(
         title: 'Test Game',
         system: 'PC',
-        status: GameStatus.backlog,
+        status: GameStatus.unplayed,
       );
       final db = await dbService.database;
       final gameId = await db.insert('games', game.toMap());
@@ -163,7 +163,7 @@ void main() {
 
     test('remove game from collection', () async {
       // Create test game
-      final game = Game(title: 'Test', system: 'PC', status: GameStatus.backlog);
+      final game = Game(title: 'Test', system: 'PC', status: GameStatus.unplayed);
       final db = await dbService.database;
       final gameId = await db.insert('games', game.toMap());
 
@@ -190,8 +190,8 @@ void main() {
     });
 
     test('game count updates when adding games', () async {
-      final game1 = Game(title: 'Game 1', system: 'PC', status: GameStatus.backlog);
-      final game2 = Game(title: 'Game 2', system: 'PC', status: GameStatus.backlog);
+      final game1 = Game(title: 'Game 1', system: 'PC', status: GameStatus.unplayed);
+      final game2 = Game(title: 'Game 2', system: 'PC', status: GameStatus.unplayed);
       final db = await dbService.database;
       final gameId1 = await db.insert('games', game1.toMap());
       final gameId2 = await db.insert('games', game2.toMap());
@@ -207,7 +207,7 @@ void main() {
     });
 
     test('game count updates when removing games', () async {
-      final game = Game(title: 'Test', system: 'PC', status: GameStatus.backlog);
+      final game = Game(title: 'Test', system: 'PC', status: GameStatus.unplayed);
       final db = await dbService.database;
       final gameId = await db.insert('games', game.toMap());
 

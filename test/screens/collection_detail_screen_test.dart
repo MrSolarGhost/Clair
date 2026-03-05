@@ -109,19 +109,12 @@ void main() {
       final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add test games
-      final db = await dbService.database;
-      final game1Id = await db.insert('games', {
-        'title': 'Game 1',
-        'system': 'PC',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
-      final game2Id = await db.insert('games', {
-        'title': 'Game 2',
-        'system': 'PS1',
-        'status': 'playing',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      final game1Id = await dbService.insertGame(
+        Game(title: 'Game 1', system: 'PC', status: GameStatus.unplayed),
+      );
+      final game2Id = await dbService.insertGame(
+        Game(title: 'Game 2', system: 'PS1', status: GameStatus.playing),
+      );
 
       await service.addGameToCollection(id, game1Id);
       await service.addGameToCollection(id, game2Id);
@@ -139,14 +132,10 @@ void main() {
       final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add games
-      final db = await dbService.database;
       for (int i = 0; i < 5; i++) {
-        final gameId = await db.insert('games', {
-          'title': 'Game $i',
-          'system': 'PC',
-          'status': 'backlog',
-          'created_at': DateTime.now().toIso8601String(),
-        });
+        final gameId = await dbService.insertGame(
+          Game(title: 'Game $i', system: 'PC', status: GameStatus.unplayed),
+        );
         await service.addGameToCollection(id, gameId);
       }
 
@@ -165,13 +154,9 @@ void main() {
     testWidgets('displays game cover placeholder when no cover', (tester) async {
       final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
-      final db = await dbService.database;
-      final gameId = await db.insert('games', {
-        'title': 'No Cover Game',
-        'system': 'PC',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      final gameId = await dbService.insertGame(
+        Game(title: 'No Cover Game', system: 'PC', status: GameStatus.unplayed),
+      );
       await service.addGameToCollection(id, gameId);
 
       await pumpDetailScreen(tester, id);
@@ -191,12 +176,9 @@ void main() {
     testWidgets('handles null system name gracefully', (tester) async {
       final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
-      final db = await dbService.database;
-      final gameId = await db.insert('games', {
-        'title': 'Game',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      final gameId = await dbService.insertGame(
+        Game(title: 'Game', status: GameStatus.unplayed),
+      );
       await service.addGameToCollection(id, gameId);
 
       await pumpDetailScreen(tester, id);
@@ -253,12 +235,9 @@ void main() {
       final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add game with minimal data
-      final db = await dbService.database;
-      final gameId = await db.insert('games', {
-        'title': '',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      final gameId = await dbService.insertGame(
+        Game(title: '', status: GameStatus.unplayed),
+      );
       await service.addGameToCollection(id, gameId);
 
       await pumpDetailScreen(tester, id);
@@ -336,13 +315,9 @@ void main() {
       final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add a game
-      final db = await dbService.database;
-      final gameId = await db.insert('games', {
-        'title': 'Game',
-        'system': 'PC',
-        'status': 'backlog',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      final gameId = await dbService.insertGame(
+        Game(title: 'Game', system: 'PC', status: GameStatus.unplayed),
+      );
       await service.addGameToCollection(id, gameId);
 
       await pumpDetailScreen(tester, id);
