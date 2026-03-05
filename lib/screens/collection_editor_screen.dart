@@ -1,11 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import '../models/collection.dart';
-import '../models/game.dart';
 import '../services/collections_service.dart';
-import '../services/database_service.dart';
 
 class CollectionEditorScreen extends StatefulWidget {
   final Collection? collection;
@@ -17,229 +14,233 @@ class CollectionEditorScreen extends StatefulWidget {
 }
 
 class _CollectionEditorScreenState extends State<CollectionEditorScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _collectionsService = CollectionsService();
-  final _dbService = DatabaseService.instance;
+  final CollectionsService _collectionsService = CollectionsService();
 
-  bool _isLoading = true;
-  String? _selectedCoverPath;
-  List<Game> _games = [];
-  final Set<int> _selectedGameIds = {};
+  String? _coverPath;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (widget.collection != null) {
+      _nameController.text = widget.collection!.name;
+      _descriptionController.text = widget.collection!.description ?? '';
+      _coverPath = widget.collection!.coverPath;
+    }
   }
 
-  Future<void> _loadData() async {
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickCover() async {
     try {
-      if (widget.collection != null) {
-        _nameController.text = widget.collection!.name;
-        _descriptionController.text = widget.collection!.description ?? '';
-        _selectedCoverPath = widget.collection!.coverPath;
-        final existingGames =
-            await _collectionsService.getGamesForCollection(widget.collection!.id!);
-        _selectedGameIds.addAll(existingGames.map((g) => g.id!).toSet());
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        setState(() {
+          _coverPath = result.files.single.path;
+        });
       }
-      _games = await _dbService.getAllGames();
     } catch (_) {
-      // Silent failure
-    }
-
-    if (mounted) {
-      setState(() => _isLoading = false);
+      // Silent error handling
     }
   }
 
-  Future<void> _pickCoverFromFile() async {
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
     try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.image);
-      if (result == null || result.files.single.path == null) return;
-
-      final source = File(result.files.single.path!);
-      final docs = await getApplicationDocumentsDirectory();
-      final filename =
-          'collection_${DateTime.now().millisecondsSinceEpoch}_${result.files.single.name}';
-      final dest = File('${docs.path}/$filename');
-      await source.copy(dest.path);
-
-      setState(() {
-        _selectedCoverPath = dest.path;
-      });
-    } catch (_) {
-      // Silent failure
-    }
-  }
-
-  void _pickCoverFromGame(Game game) {
-    if (game.coverPath == null || game.coverPath!.isEmpty) return;
-    setState(() {
-      _selectedCoverPath = game.coverPath;
-    });
-  }
-
-  Future<void> _saveCollection() async {
-    try {
-      final name = _nameController.text.trim();
-      if (name.isEmpty) return;
-
-      final description = _descriptionController.text.trim();
       if (widget.collection == null) {
-        final id = await _collectionsService.createCollection(
-          Collection(
-            name: name,
-            description: description.isEmpty ? null : description,
-            coverPath: _selectedCoverPath,
-          ),
+        // Create new collection
+        await _collectionsService.createCollection(
+          name: _nameController.text.trim(),
+          description: _descriptionController.text.trim(),
+          coverPath: _coverPath,
         );
-        for (final gameId in _selectedGameIds) {
-          await _collectionsService.addGameToCollection(id, gameId);
-        }
       } else {
-        await _collectionsService.updateCollection(
-          widget.collection!.copyWith(
-            name: name,
-            description: description.isEmpty ? null : description,
-            coverPath: _selectedCoverPath,
-          ),
+        // Update existing collection
+        final updated = Collection(
+          id: widget.collection!.id,
+          name: _nameController.text.trim(),
+          description: _descriptionController.text.trim(),
+          coverPath: _coverPath,
+          createdAt: widget.collection!.createdAt,
+          gameCount: widget.collection!.gameCount,
         );
-        final existing =
-            await _collectionsService.getGamesForCollection(widget.collection!.id!);
-        final existingIds = existing.map((g) => g.id!).toSet();
-
-        for (final gameId in _selectedGameIds.difference(existingIds)) {
-          await _collectionsService.addGameToCollection(widget.collection!.id!, gameId);
-        }
-        for (final gameId in existingIds.difference(_selectedGameIds)) {
-          await _collectionsService.removeGameFromCollection(widget.collection!.id!, gameId);
-        }
+        await _collectionsService.updateCollection(updated);
       }
 
       if (mounted) {
         Navigator.pop(context, true);
       }
     } catch (_) {
-      // Silent failure
+      // Silent error handling
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _delete() async {
+    if (widget.collection?.id == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Collection'),
+        content: const Text(
+          'Are you sure you want to delete this collection? Games will not be deleted.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _collectionsService.deleteCollection(widget.collection!.id!);
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (_) {
+      // Silent error handling
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.collection != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.collection == null ? 'New Collection' : 'Edit Collection'),
+        title: Text(isEdit ? 'Edit Collection' : 'New Collection'),
+        actions: [
+          if (isEdit)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: _isLoading ? null : _delete,
+              tooltip: 'Delete collection',
+            ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Description',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Artwork', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: _pickCoverFromFile,
-                        icon: const Icon(Icons.image),
-                        label: const Text('Pick from file'),
-                      ),
-                      const SizedBox(width: 12),
-                      if (_selectedCoverPath != null)
-                        Expanded(
-                          child: Text(
-                            _selectedCoverPath!,
-                            overflow: TextOverflow.ellipsis,
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Cover image picker
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickCover,
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade900,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.grey.shade800,
+                              width: 2,
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text('Pick from game cover'),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 80,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: _games
-                          .where((g) => g.coverPath != null && g.coverPath!.isNotEmpty)
-                          .map((game) => GestureDetector(
-                                onTap: () => _pickCoverFromGame(game),
-                                child: Container(
-                                  width: 60,
-                                  margin: const EdgeInsets.only(right: 8),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: _selectedCoverPath == game.coverPath
-                                          ? Colors.blue
-                                          : Colors.transparent,
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(6),
-                                    image: DecorationImage(
-                                      image: FileImage(File(game.coverPath!)),
-                                      fit: BoxFit.cover,
-                                    ),
+                          child: _coverPath != null && _coverPath!.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.file(
+                                    File(_coverPath!),
+                                    fit: BoxFit.cover,
                                   ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_photo_alternate,
+                                      size: 48,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Add Cover',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ))
-                          .toList(),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Games', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _games.length,
-                      itemBuilder: (context, index) {
-                        final game = _games[index];
-                        final selected = _selectedGameIds.contains(game.id);
-                        return CheckboxListTile(
-                          value: selected,
-                          title: Text(game.title),
-                          subtitle: Text(game.system ?? 'Unknown'),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value == true) {
-                                _selectedGameIds.add(game.id!);
-                              } else {
-                                _selectedGameIds.remove(game.id!);
-                              }
-                            });
-                          },
-                        );
+                    const SizedBox(height: 32),
+
+                    // Name field
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Collection Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Name is required';
+                        }
+                        return null;
                       },
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: _saveCollection,
-                      child: const Text('Save'),
+                    const SizedBox(height: 16),
+
+                    // Description field
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Description (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 32),
+
+                    // Save button
+                    ElevatedButton(
+                      onPressed: _save,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: Text(isEdit ? 'Save Changes' : 'Create Collection'),
+                    ),
+                  ],
+                ),
               ),
             ),
     );
