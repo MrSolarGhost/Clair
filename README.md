@@ -69,3 +69,8 @@ To launch games, configure RetroArch:
 4. Set `RETROARCH_CORES_PATH` (RetroArch cores folder)
 
 **Supported systems (v1):** NES, SNES, GB, GBC, GBA, PS1
+
+### Collections
+
+Collections are saved to the local database and edited in the Collection Editor.
+Artwork can be picked from disk or from game cover art.
