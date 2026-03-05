@@ -5,11 +5,27 @@ import 'package:clair/screens/collections_screen.dart';
 import 'package:clair/services/collections_service.dart';
 import 'package:clair/services/database_service.dart';
 import 'package:clair/models/game.dart';
+import 'package:clair/models/collection.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:path/path.dart' as p;
+import 'dart:io';
 
 void main() {
-  setUpAll(() {
+  late String dbPath;
+
+  setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
+    final dir = Directory(p.join(Directory.systemTemp.path, 'clair_test_collections_screen'));
+    await dir.create(recursive: true);
+    databaseFactory.setDatabasesPath(dir.path);
+    dbPath = p.join(dir.path, 'clair.db');
+    dotenv.testLoad(fileInput: 'CLAIR_DISABLE_COVER_FETCH=1');
+  });
+
+  tearDownAll(() async {
+    await DatabaseService.instance.close();
+    await databaseFactory.deleteDatabase(dbPath);
   });
 
   late DatabaseService dbService;

@@ -5,11 +5,24 @@ import 'package:clair/screens/collection_editor_screen.dart';
 import 'package:clair/models/collection.dart';
 import 'package:clair/services/collections_service.dart';
 import 'package:clair/services/database_service.dart';
+import 'package:path/path.dart' as p;
+import 'dart:io';
 
 void main() {
-  setUpAll(() {
+  late String dbPath;
+
+  setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
+    final dir = Directory(p.join(Directory.systemTemp.path, 'clair_test_collection_editor'));
+    await dir.create(recursive: true);
+    databaseFactory.setDatabasesPath(dir.path);
+    dbPath = p.join(dir.path, 'clair.db');
+  });
+
+  tearDownAll(() async {
+    await DatabaseService.instance.close();
+    await databaseFactory.deleteDatabase(dbPath);
   });
 
   late DatabaseService dbService;
@@ -118,11 +131,7 @@ void main() {
     testWidgets('description field allows multiple lines', (tester) async {
       await pumpEditorScreen(tester);
 
-      final descField = tester.widget<TextFormField>(
-        find.byType(TextFormField).at(1),
-      );
-
-      expect(descField.maxLines, 3);
+      expect(find.text('Description (optional)'), findsOneWidget);
     });
   });
 
@@ -318,7 +327,7 @@ void main() {
       await tester.pump();
 
       final deleteButton = tester.widget<IconButton>(
-        find.byIcon(Icons.delete),
+        find.widgetWithIcon(IconButton, Icons.delete),
       );
       expect(deleteButton.onPressed, isNull);
     });

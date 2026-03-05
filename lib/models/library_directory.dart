@@ -38,7 +38,7 @@ class LibraryDirectory {
       lastScannedAt: map['last_scanned_at'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['last_scanned_at'] as int)
           : null,
-      createdDate: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
     );
   }
 
@@ -57,7 +57,7 @@ class LibraryDirectory {
       system: system ?? this.system,
       scanRecursive: scanRecursive ?? this.scanRecursive,
       lastScannedAt: lastScannedAt ?? this.lastScannedAt,
-      createdDate: createdAt ?? this.createdDate,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }
