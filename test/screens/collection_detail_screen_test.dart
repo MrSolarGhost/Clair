@@ -38,7 +38,7 @@ void main() {
 
   group('CollectionDetailScreen Widget Tests', () {
     testWidgets('shows loading indicator initially', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -73,7 +73,7 @@ void main() {
     });
 
     testWidgets('displays game count', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -81,7 +81,7 @@ void main() {
     });
 
     testWidgets('displays back button', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -89,7 +89,7 @@ void main() {
     });
 
     testWidgets('displays edit button', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -97,7 +97,7 @@ void main() {
     });
 
     testWidgets('shows empty state when no games', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Empty Collection', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Empty Collection', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -106,7 +106,7 @@ void main() {
     });
 
     testWidgets('displays games in grid', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add test games
       final db = await dbService.database;
@@ -136,7 +136,7 @@ void main() {
     });
 
     testWidgets('games grid has correct layout', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add games
       final db = await dbService.database;
@@ -163,7 +163,7 @@ void main() {
     });
 
     testWidgets('displays game cover placeholder when no cover', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       final db = await dbService.database;
       final gameId = await db.insert('games', {
@@ -180,7 +180,7 @@ void main() {
     });
 
     testWidgets('handles null description gracefully', (tester) async {
-      final id = await service.createCollection(Collection(name: 'No Description', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'No Description', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -189,7 +189,7 @@ void main() {
     });
 
     testWidgets('handles null system name gracefully', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       final db = await dbService.database;
       final gameId = await db.insert('games', {
@@ -208,7 +208,7 @@ void main() {
   group('CollectionDetailScreen Cover Display', () {
     testWidgets('displays collection cover placeholder when no cover',
         (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -217,7 +217,7 @@ void main() {
     });
 
     testWidgets('cover container has correct size', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -241,7 +241,7 @@ void main() {
     });
 
     testWidgets('handles loading errors gracefully', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -250,7 +250,7 @@ void main() {
     });
 
     testWidgets('handles null game titles gracefully', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add game with minimal data
       final db = await dbService.database;
@@ -270,7 +270,7 @@ void main() {
 
   group('CollectionDetailScreen Header', () {
     testWidgets('header uses gradient background', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -286,7 +286,7 @@ void main() {
     });
 
     testWidgets('header has proper padding', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -301,7 +301,7 @@ void main() {
     });
 
     testWidgets('uses SafeArea for header content', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -311,7 +311,7 @@ void main() {
 
   group('CollectionDetailScreen Layout', () {
     testWidgets('uses Column for main layout', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -319,7 +319,7 @@ void main() {
     });
 
     testWidgets('empty state is centered', (tester) async {
-      final id = await service.createCollection(Collection(name: 'Empty', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Empty', createdDate: DateTime.now(), gameCount: 0));
 
       await pumpDetailScreen(tester, id);
 
@@ -333,7 +333,7 @@ void main() {
 
     testWidgets('games grid uses Focus for keyboard navigation',
         (tester) async {
-      final id = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
+      final id = await service.createCollection(Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0));
 
       // Add a game
       final db = await dbService.database;

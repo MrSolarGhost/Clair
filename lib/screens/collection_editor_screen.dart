@@ -71,7 +71,7 @@ class _CollectionEditorScreenState extends State<CollectionEditorScreen> {
                 ? null
                 : _descriptionController.text.trim(),
             coverPath: _coverPath,
-            createdAt: DateTime.now(),
+            createdDate: DateTime.now(),
             gameCount: 0,
           ),
         );
@@ -84,7 +84,7 @@ class _CollectionEditorScreenState extends State<CollectionEditorScreen> {
               ? null
               : _descriptionController.text.trim(),
           coverPath: _coverPath,
-          createdAt: widget.collection!.createdAt,
+          createdDate: widget.collection!.createdDate,
           gameCount: widget.collection!.gameCount,
         );
         await _collectionsService.updateCollection(updated);

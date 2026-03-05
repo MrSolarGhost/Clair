@@ -34,7 +34,7 @@ void main() {
           name: 'Test Collection',
           description: 'Test description',
           coverPath: '/tmp/cover.png',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -53,7 +53,7 @@ void main() {
       final id = await service.createCollection(
         Collection(
           name: 'Minimal',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -68,7 +68,7 @@ void main() {
       final id = await service.createCollection(
         Collection(
           name: 'Original',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -79,7 +79,7 @@ void main() {
           name: 'Updated',
           description: 'New description',
           coverPath: '/new/cover.png',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -93,7 +93,7 @@ void main() {
       final id = await service.createCollection(
         Collection(
           name: 'To Delete',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -105,13 +105,13 @@ void main() {
 
     test('list collections', () async {
       await service.createCollection(
-        Collection(name: 'Collection 1', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Collection 1', createdDate: DateTime.now(), gameCount: 0),
       );
       await service.createCollection(
-        Collection(name: 'Collection 2', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Collection 2', createdDate: DateTime.now(), gameCount: 0),
       );
       await service.createCollection(
-        Collection(name: 'Collection 3', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Collection 3', createdDate: DateTime.now(), gameCount: 0),
       );
 
       final collections = await service.listCollections();
@@ -120,7 +120,7 @@ void main() {
 
     test('get collection', () async {
       final id = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
       final collection = await service.getCollection(id);
 
@@ -148,7 +148,7 @@ void main() {
 
       // Create collection
       final collectionId = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
 
       // Add game to collection
@@ -169,7 +169,7 @@ void main() {
 
       // Create collection and add game
       final collectionId = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
       await service.addGameToCollection(collectionId, gameId);
 
@@ -183,7 +183,7 @@ void main() {
 
     test('get games for empty collection', () async {
       final collectionId = await service.createCollection(
-        Collection(name: 'Empty', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Empty', createdDate: DateTime.now(), gameCount: 0),
       );
       final games = await service.getGamesForCollection(collectionId);
       expect(games, isEmpty);
@@ -197,7 +197,7 @@ void main() {
       final gameId2 = await db.insert('games', game2.toMap());
 
       final collectionId = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
       await service.addGameToCollection(collectionId, gameId1);
       await service.addGameToCollection(collectionId, gameId2);
@@ -212,7 +212,7 @@ void main() {
       final gameId = await db.insert('games', game.toMap());
 
       final collectionId = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
       await service.addGameToCollection(collectionId, gameId);
       await service.removeGameFromCollection(collectionId, gameId);
@@ -226,7 +226,7 @@ void main() {
     test('create collection with empty name fails silently', () async {
       try {
         await service.createCollection(
-          Collection(name: '', createdAt: DateTime.now(), gameCount: 0),
+          Collection(name: '', createdDate: DateTime.now(), gameCount: 0),
         );
         fail('Should throw error');
       } catch (_) {
@@ -240,7 +240,7 @@ void main() {
           Collection(
             id: 99999,
             name: 'Test',
-            createdAt: DateTime.now(),
+            createdDate: DateTime.now(),
             gameCount: 0,
           ),
         );
@@ -284,7 +284,7 @@ void main() {
           name: 'Test',
           description: 'Desc',
           coverPath: '/tmp/cover.png',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -295,7 +295,7 @@ void main() {
 
     test('null coverPath is persisted', () async {
       final id = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
 
       final collection = await service.getCollection(id);
@@ -304,7 +304,7 @@ void main() {
 
     test('coverPath can be updated', () async {
       final id = await service.createCollection(
-        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+        Collection(name: 'Test', createdDate: DateTime.now(), gameCount: 0),
       );
 
       await service.updateCollection(
@@ -312,7 +312,7 @@ void main() {
           id: id,
           name: 'Test',
           coverPath: '/new/path.png',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -326,7 +326,7 @@ void main() {
         Collection(
           name: 'Test',
           coverPath: '/tmp/cover.png',
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );
@@ -336,7 +336,7 @@ void main() {
           id: id,
           name: 'Test',
           coverPath: null,
-          createdAt: DateTime.now(),
+          createdDate: DateTime.now(),
           gameCount: 0,
         ),
       );

@@ -26,7 +26,7 @@ class _GuidesScreenState extends State<GuidesScreen> {
       currentPage: 42,
       totalPages: 150,
       lastAccessed: DateTime.now().subtract(const Duration(hours: 2)),
-      createdAt: DateTime.now().subtract(const Duration(days: 7)),
+      createdDate: DateTime.now().subtract(const Duration(days: 7)),
     ),
     Guide(
       id: 2,
@@ -37,7 +37,7 @@ class _GuidesScreenState extends State<GuidesScreen> {
       url: 'https://hollowknight.fandom.com/wiki/Charms',
       scrollPosition: 0.65,
       lastAccessed: DateTime.now().subtract(const Duration(days: 1)),
-      createdAt: DateTime.now().subtract(const Duration(days: 14)),
+      createdDate: DateTime.now().subtract(const Duration(days: 14)),
     ),
     Guide(
       id: 3,
@@ -48,7 +48,7 @@ class _GuidesScreenState extends State<GuidesScreen> {
       localPath: '/guides/celeste-bside.txt',
       scrollPosition: 0.32,
       lastAccessed: DateTime.now().subtract(const Duration(days: 3)),
-      createdAt: DateTime.now().subtract(const Duration(days: 20)),
+      createdDate: DateTime.now().subtract(const Duration(days: 20)),
     ),
     Guide(
       id: 4,
@@ -61,7 +61,7 @@ class _GuidesScreenState extends State<GuidesScreen> {
       currentPage: 8,
       totalPages: 25,
       lastAccessed: DateTime.now().subtract(const Duration(hours: 12)),
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      createdDate: DateTime.now().subtract(const Duration(days: 5)),
     ),
     Guide(
       id: 5,
@@ -71,7 +71,7 @@ class _GuidesScreenState extends State<GuidesScreen> {
       source: GuideSource.other,
       url: 'https://portal.fandom.com/wiki/Advanced_Chambers',
       scrollPosition: 0.0,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      createdDate: DateTime.now().subtract(const Duration(days: 2)),
     ),
   ];
 

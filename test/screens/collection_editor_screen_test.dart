@@ -131,7 +131,7 @@ void main() {
       final collection = Collection(
         id: 1,
         name: 'Test',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 
@@ -144,7 +144,7 @@ void main() {
       final collection = Collection(
         id: 1,
         name: 'Test',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 
@@ -157,7 +157,7 @@ void main() {
       final collection = Collection(
         id: 1,
         name: 'Test',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 
@@ -171,7 +171,7 @@ void main() {
         id: 1,
         name: 'Existing Collection',
         description: 'Existing description',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 5,
       );
 
@@ -186,7 +186,7 @@ void main() {
         id: 1,
         name: 'Test',
         description: null,
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 
@@ -202,7 +202,7 @@ void main() {
       final collection = Collection(
         id: 1,
         name: 'Test',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 
@@ -226,7 +226,7 @@ void main() {
       final collection = Collection(
         id: 1,
         name: 'Test',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 
@@ -307,7 +307,7 @@ void main() {
       final collection = Collection(
         id: 1,
         name: 'Test',
-        createdAt: DateTime.now(),
+        createdDate: DateTime.now(),
         gameCount: 0,
       );
 

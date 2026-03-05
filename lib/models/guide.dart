@@ -28,7 +28,7 @@ class Guide {
     this.totalPages = 0,
     this.scrollPosition = 0.0,
     this.lastAccessed,
-    required this.createdAt,
+    required this.createdDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -68,7 +68,7 @@ class Guide {
       lastAccessed: map['lastAccessed'] != null
           ? DateTime.parse(map['lastAccessed'] as String)
           : null,
-      createdAt: DateTime.parse(map['createdAt'] as String),
+      createdDate: DateTime.parse(map['createdAt'] as String),
     );
   }
 
@@ -98,7 +98,7 @@ class Guide {
       totalPages: totalPages ?? this.totalPages,
       scrollPosition: scrollPosition ?? this.scrollPosition,
       lastAccessed: lastAccessed ?? this.lastAccessed,
-      createdAt: createdAt ?? this.createdAt,
+      createdDate: createdAt ?? this.createdDate,
     );
   }
 

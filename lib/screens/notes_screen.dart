@@ -36,7 +36,7 @@ Margit the Fell:
       gameTitle: 'Elden Ring',
       tags: ['bosses', 'strategies'],
       isPinned: true,
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      createdDate: DateTime.now().subtract(const Duration(days: 5)),
       updatedAt: DateTime.now().subtract(const Duration(hours: 3)),
     ),
     Note(
@@ -56,7 +56,7 @@ Margit the Fell:
       gameTitle: 'Hollow Knight',
       tags: ['completion', 'checklist'],
       isPinned: true,
-      createdAt: DateTime.now().subtract(const Duration(days: 12)),
+      createdDate: DateTime.now().subtract(const Duration(days: 12)),
       updatedAt: DateTime.now().subtract(const Duration(days: 1)),
     ),
     Note(
@@ -76,7 +76,7 @@ Maybe: Stardew Valley, A Short Hike, Unpacking
       type: NoteType.text,
       tags: ['recommendations', 'backlog'],
       isPinned: false,
-      createdAt: DateTime.now().subtract(const Duration(days: 8)),
+      createdDate: DateTime.now().subtract(const Duration(days: 8)),
       updatedAt: DateTime.now().subtract(const Duration(days: 2)),
     ),
     Note(
@@ -99,7 +99,7 @@ Best time: Forsaken City B-Side in 4:23
       gameTitle: 'Celeste',
       tags: ['progress', 'speedrun'],
       isPinned: false,
-      createdAt: DateTime.now().subtract(const Duration(days: 15)),
+      createdDate: DateTime.now().subtract(const Duration(days: 15)),
       updatedAt: DateTime.now().subtract(const Duration(hours: 8)),
     ),
     Note(
@@ -122,7 +122,7 @@ Artemis Crit Build:
       gameTitle: 'Hades',
       tags: ['builds', 'strategies'],
       isPinned: false,
-      createdAt: DateTime.now().subtract(const Duration(days: 20)),
+      createdDate: DateTime.now().subtract(const Duration(days: 20)),
       updatedAt: DateTime.now().subtract(const Duration(days: 10)),
     ),
     Note(
@@ -142,7 +142,7 @@ Next game night: Try It Takes Two
       type: NoteType.text,
       tags: ['multiplayer', 'recommendations'],
       isPinned: false,
-      createdAt: DateTime.now().subtract(const Duration(days: 3)),
+      createdDate: DateTime.now().subtract(const Duration(days: 3)),
       updatedAt: DateTime.now().subtract(const Duration(days: 3)),
     ),
   ];
