@@ -6,7 +6,7 @@ import 'package:clair/models/library_directory.dart';
 void main() {
   setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfiNoIsolate;
   });
 
   group('DatabaseService - Library Directories', () {

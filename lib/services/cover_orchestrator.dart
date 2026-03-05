@@ -26,6 +26,12 @@ class CoverOrchestrator {
   /// Tries quick fetch (3s timeout), queues on failure
   Future<void> onGameAdded(Game game) async {
     if (game.id == null) return;
+    if ((_steamGridDB.apiKey).isEmpty) {
+      return;
+    }
+    if (dotenv.env['CLAIR_DISABLE_COVER_FETCH'] == '1') {
+      return;
+    }
 
     try {
       // Quick fetch attempt

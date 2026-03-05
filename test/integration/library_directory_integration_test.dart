@@ -9,10 +9,13 @@ import 'package:path/path.dart' as path;
 void main() {
   setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    
+    databaseFactory = databaseFactoryFfiNoIsolate;
+
     // Initialize dotenv for testing
-    dotenv.testLoad(fileInput: '');
+    final apiKey = Platform.environment['STEAMGRIDDB_API_KEY'] ?? '';
+    dotenv.testLoad(
+      fileInput: 'STEAMGRIDDB_API_KEY=$apiKey\nCLAIR_DISABLE_COVER_FETCH=1',
+    );
   });
 
   group('Library Directory Integration', () {

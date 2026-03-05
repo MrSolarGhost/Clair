@@ -8,7 +8,7 @@ import 'package:clair/services/database_service.dart';
 void main() {
   setUpAll(() async {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfiNoIsolate;
     
     // Initialize dotenv with empty values for testing
     dotenv.testLoad(fileInput: '');
