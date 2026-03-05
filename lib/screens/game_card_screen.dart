@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/game.dart';
 import '../services/database_service.dart';
+import '../services/emulator_launch_service.dart';
 
 class GameCardScreen extends StatefulWidget {
   final int gameId;
@@ -75,7 +76,7 @@ class _GameCardScreenState extends State<GameCardScreen> {
               spacing: 12,
               runSpacing: 12,
               children: [
-                _actionButton('Launch', Icons.play_arrow, _mockLaunch),
+                _actionButton('Launch', Icons.play_arrow, () => _launch(game)),
                 _actionButton('Status', Icons.check_circle, () {}),
                 _actionButton('Notes', Icons.note, () {}),
                 _actionButton('Guides', Icons.book, () {}),
@@ -140,9 +141,13 @@ class _GameCardScreenState extends State<GameCardScreen> {
     return Center(child: Text('Error: $message'));
   }
 
-  void _mockLaunch() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Launching game (mock)...')),
-    );
+  Future<void> _launch(Game game) async {
+    try {
+      await EmulatorLaunchService().launch(game);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 }
