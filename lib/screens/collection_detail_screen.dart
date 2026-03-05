@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/game.dart';
+import 'game_card_screen.dart';
 
 class CollectionDetailScreen extends StatefulWidget {
   final String collectionName;
@@ -280,10 +281,21 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
     );
   }
 
+  void _openGameCard(Game game) {
+    if (game.id == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => GameCardScreen(gameId: game.id!),
+      ),
+    );
+  }
+
   Widget _buildGameCard(Game game, bool isSelected) {
     return GestureDetector(
       onTap: () {
         setState(() => _selectedGameIndex = _games.indexOf(game));
+        _openGameCard(game);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
