@@ -72,9 +72,9 @@ void main() {
 
     testWidgets('displays collections in grid', (tester) async {
       // Create test collections
-      await service.createCollection(name: 'Collection 1', description: 'Desc 1');
-      await service.createCollection(name: 'Collection 2', description: 'Desc 2');
-      await service.createCollection(name: 'Collection 3', description: 'Desc 3');
+      await service.createCollection(Collection(name: 'Collection 1', description: 'Desc 1', createdAt: DateTime.now(), gameCount: 0));
+      await service.createCollection(Collection(name: 'Collection 2', description: 'Desc 2', createdAt: DateTime.now(), gameCount: 0));
+      await service.createCollection(Collection(name: 'Collection 3', description: 'Desc 3', createdAt: DateTime.now(), gameCount: 0));
 
       await pumpCollectionsScreen(tester);
 
@@ -85,7 +85,7 @@ void main() {
     });
 
     testWidgets('displays collection descriptions', (tester) async {
-      await service.createCollection(name: 'Test', description: 'Test description');
+      await service.createCollection(Collection(name: 'Test', description: 'Test description', createdAt: DateTime.now(), gameCount: 0));
 
       await pumpCollectionsScreen(tester);
 
@@ -93,7 +93,7 @@ void main() {
     });
 
     testWidgets('handles collection with null description', (tester) async {
-      await service.createCollection(name: 'No Desc');
+      await service.createCollection(Collection(name: 'No Desc', createdAt: DateTime.now(), gameCount: 0));
 
       await pumpCollectionsScreen(tester);
 
@@ -102,7 +102,7 @@ void main() {
     });
 
     testWidgets('displays correct game count', (tester) async {
-      final collectionId = await service.createCollection(name: 'Test');
+      final collectionId = await service.createCollection(Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0));
 
       // Add test games
       final db = await dbService.database;
@@ -138,7 +138,7 @@ void main() {
     });
 
     testWidgets('displays collections with proper styling', (tester) async {
-      await service.createCollection(name: 'Styled Collection');
+      await service.createCollection(Collection(name: 'Styled Collection', createdAt: DateTime.now(), gameCount: 0));
 
       await pumpCollectionsScreen(tester);
 
@@ -150,9 +150,9 @@ void main() {
     });
 
     testWidgets('grid has correct layout', (tester) async {
-      await service.createCollection(name: 'Test 1');
-      await service.createCollection(name: 'Test 2');
-      await service.createCollection(name: 'Test 3');
+      await service.createCollection(Collection(name: 'Test 1', createdAt: DateTime.now(), gameCount: 0));
+      await service.createCollection(Collection(name: 'Test 2', createdAt: DateTime.now(), gameCount: 0));
+      await service.createCollection(Collection(name: 'Test 3', createdAt: DateTime.now(), gameCount: 0));
 
       await pumpCollectionsScreen(tester);
 

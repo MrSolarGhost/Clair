@@ -65,16 +65,24 @@ class _CollectionEditorScreenState extends State<CollectionEditorScreen> {
       if (widget.collection == null) {
         // Create new collection
         await _collectionsService.createCollection(
-          name: _nameController.text.trim(),
-          description: _descriptionController.text.trim(),
-          coverPath: _coverPath,
+          Collection(
+            name: _nameController.text.trim(),
+            description: _descriptionController.text.trim().isEmpty
+                ? null
+                : _descriptionController.text.trim(),
+            coverPath: _coverPath,
+            createdAt: DateTime.now(),
+            gameCount: 0,
+          ),
         );
       } else {
         // Update existing collection
         final updated = Collection(
           id: widget.collection!.id,
           name: _nameController.text.trim(),
-          description: _descriptionController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty
+              ? null
+              : _descriptionController.text.trim(),
           coverPath: _coverPath,
           createdAt: widget.collection!.createdAt,
           gameCount: widget.collection!.gameCount,

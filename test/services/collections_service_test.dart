@@ -30,9 +30,13 @@ void main() {
   group('Collection CRUD', () {
     test('create collection with all fields', () async {
       final id = await service.createCollection(
-        name: 'Test Collection',
-        description: 'Test description',
-        coverPath: '/tmp/cover.png',
+        Collection(
+          name: 'Test Collection',
+          description: 'Test description',
+          coverPath: '/tmp/cover.png',
+          createdAt: DateTime.now(),
+          gameCount: 0,
+        ),
       );
 
       expect(id, greaterThan(0));
@@ -46,7 +50,13 @@ void main() {
     });
 
     test('create collection with minimal fields', () async {
-      final id = await service.createCollection(name: 'Minimal');
+      final id = await service.createCollection(
+        Collection(
+          name: 'Minimal',
+          createdAt: DateTime.now(),
+          gameCount: 0,
+        ),
+      );
 
       final collection = await dbService.getCollection(id);
       expect(collection?.name, 'Minimal');
@@ -55,7 +65,13 @@ void main() {
     });
 
     test('update collection', () async {
-      final id = await service.createCollection(name: 'Original');
+      final id = await service.createCollection(
+        Collection(
+          name: 'Original',
+          createdAt: DateTime.now(),
+          gameCount: 0,
+        ),
+      );
 
       final updated = await service.updateCollection(
         Collection(
@@ -74,7 +90,13 @@ void main() {
     });
 
     test('delete collection', () async {
-      final id = await service.createCollection(name: 'To Delete');
+      final id = await service.createCollection(
+        Collection(
+          name: 'To Delete',
+          createdAt: DateTime.now(),
+          gameCount: 0,
+        ),
+      );
       await service.deleteCollection(id);
 
       final collection = await dbService.getCollection(id);
@@ -82,16 +104,24 @@ void main() {
     });
 
     test('list collections', () async {
-      await service.createCollection(name: 'Collection 1');
-      await service.createCollection(name: 'Collection 2');
-      await service.createCollection(name: 'Collection 3');
+      await service.createCollection(
+        Collection(name: 'Collection 1', createdAt: DateTime.now(), gameCount: 0),
+      );
+      await service.createCollection(
+        Collection(name: 'Collection 2', createdAt: DateTime.now(), gameCount: 0),
+      );
+      await service.createCollection(
+        Collection(name: 'Collection 3', createdAt: DateTime.now(), gameCount: 0),
+      );
 
       final collections = await service.listCollections();
       expect(collections.length, greaterThanOrEqualTo(3));
     });
 
     test('get collection', () async {
-      final id = await service.createCollection(name: 'Test');
+      final id = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
       final collection = await service.getCollection(id);
 
       expect(collection, isNotNull);
@@ -117,7 +147,9 @@ void main() {
       final gameId = await db.insert('games', game.toMap());
 
       // Create collection
-      final collectionId = await service.createCollection(name: 'Test');
+      final collectionId = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
 
       // Add game to collection
       await service.addGameToCollection(collectionId, gameId);
@@ -136,7 +168,9 @@ void main() {
       final gameId = await db.insert('games', game.toMap());
 
       // Create collection and add game
-      final collectionId = await service.createCollection(name: 'Test');
+      final collectionId = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
       await service.addGameToCollection(collectionId, gameId);
 
       // Remove game
@@ -148,7 +182,9 @@ void main() {
     });
 
     test('get games for empty collection', () async {
-      final collectionId = await service.createCollection(name: 'Empty');
+      final collectionId = await service.createCollection(
+        Collection(name: 'Empty', createdAt: DateTime.now(), gameCount: 0),
+      );
       final games = await service.getGamesForCollection(collectionId);
       expect(games, isEmpty);
     });
@@ -160,7 +196,9 @@ void main() {
       final gameId1 = await db.insert('games', game1.toMap());
       final gameId2 = await db.insert('games', game2.toMap());
 
-      final collectionId = await service.createCollection(name: 'Test');
+      final collectionId = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
       await service.addGameToCollection(collectionId, gameId1);
       await service.addGameToCollection(collectionId, gameId2);
 
@@ -173,7 +211,9 @@ void main() {
       final db = await dbService.database;
       final gameId = await db.insert('games', game.toMap());
 
-      final collectionId = await service.createCollection(name: 'Test');
+      final collectionId = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
       await service.addGameToCollection(collectionId, gameId);
       await service.removeGameFromCollection(collectionId, gameId);
 
@@ -185,7 +225,9 @@ void main() {
   group('Error Handling', () {
     test('create collection with empty name fails silently', () async {
       try {
-        await service.createCollection(name: '');
+        await service.createCollection(
+          Collection(name: '', createdAt: DateTime.now(), gameCount: 0),
+        );
         fail('Should throw error');
       } catch (_) {
         // Expected
@@ -238,9 +280,13 @@ void main() {
   group('coverPath persistence', () {
     test('coverPath is persisted and retrieved', () async {
       final id = await service.createCollection(
-        name: 'Test',
-        description: 'Desc',
-        coverPath: '/tmp/cover.png',
+        Collection(
+          name: 'Test',
+          description: 'Desc',
+          coverPath: '/tmp/cover.png',
+          createdAt: DateTime.now(),
+          gameCount: 0,
+        ),
       );
 
       final collection = await service.getCollection(id);
@@ -248,14 +294,18 @@ void main() {
     });
 
     test('null coverPath is persisted', () async {
-      final id = await service.createCollection(name: 'Test');
+      final id = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
 
       final collection = await service.getCollection(id);
       expect(collection?.coverPath, isNull);
     });
 
     test('coverPath can be updated', () async {
-      final id = await service.createCollection(name: 'Test');
+      final id = await service.createCollection(
+        Collection(name: 'Test', createdAt: DateTime.now(), gameCount: 0),
+      );
 
       await service.updateCollection(
         Collection(
@@ -273,8 +323,12 @@ void main() {
 
     test('coverPath can be cleared', () async {
       final id = await service.createCollection(
-        name: 'Test',
-        coverPath: '/tmp/cover.png',
+        Collection(
+          name: 'Test',
+          coverPath: '/tmp/cover.png',
+          createdAt: DateTime.now(),
+          gameCount: 0,
+        ),
       );
 
       await service.updateCollection(
