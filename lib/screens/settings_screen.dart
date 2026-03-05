@@ -17,6 +17,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _apiKeyController = TextEditingController();
+  final _retroarchPathController = TextEditingController();
+  final _retroarchCoresPathController = TextEditingController();
   bool _isLoading = false;
   String? _statusMessage;
   int _totalGames = 0;
@@ -42,7 +44,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         for (final line in lines) {
           if (line.startsWith('STEAMGRIDDB_API_KEY=')) {
             _apiKeyController.text = line.substring(20);
-            break;
+          } else if (line.startsWith('RETROARCH_PATH=')) {
+            _retroarchPathController.text = line.substring(15);
+          } else if (line.startsWith('RETROARCH_CORES_PATH=')) {
+            _retroarchCoresPathController.text = line.substring(21);
           }
         }
       }
@@ -78,17 +83,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
 
       // Update or add API key line
-      bool found = false;
+      bool foundKey = false;
+      bool foundRetroarch = false;
+      bool foundRetroarchCores = false;
       for (int i = 0; i < lines.length; i++) {
         if (lines[i].startsWith('STEAMGRIDDB_API_KEY=')) {
           lines[i] = 'STEAMGRIDDB_API_KEY=$key';
-          found = true;
-          break;
+          foundKey = true;
+        } else if (lines[i].startsWith('RETROARCH_PATH=')) {
+          lines[i] = 'RETROARCH_PATH=${_retroarchPathController.text.trim()}';
+          foundRetroarch = true;
+        } else if (lines[i].startsWith('RETROARCH_CORES_PATH=')) {
+          lines[i] = 'RETROARCH_CORES_PATH=${_retroarchCoresPathController.text.trim()}';
+          foundRetroarchCores = true;
         }
       }
 
-      if (!found) {
+      if (!foundKey) {
         lines.add('STEAMGRIDDB_API_KEY=$key');
+      }
+      if (!foundRetroarch) {
+        lines.add('RETROARCH_PATH=${_retroarchPathController.text.trim()}');
+      }
+      if (!foundRetroarchCores) {
+        lines.add('RETROARCH_CORES_PATH=${_retroarchCoresPathController.text.trim()}');
       }
 
       // Write back to file
@@ -205,6 +223,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ],
+            const SizedBox(height: 24),
+            const Text(
+              'RetroArch Configuration',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _retroarchPathController,
+              decoration: const InputDecoration(
+                hintText: 'RetroArch executable path',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _retroarchCoresPathController,
+              decoration: const InputDecoration(
+                hintText: 'RetroArch cores path',
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 32),
             const Text(
               'Cover Art',
