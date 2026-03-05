@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/game.dart';
 import '../services/database_service.dart';
+import 'game_card_screen.dart';
 
 class PlayScreen extends StatefulWidget {
   const PlayScreen({super.key});
@@ -489,11 +490,17 @@ class _PlayScreenState extends State<PlayScreen> {
   }
 
   void _openGameCard(Game game) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Opening ${game.title}...'),
-        duration: const Duration(seconds: 1),
-        backgroundColor: Colors.blue.shade700,
+    if (game.id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Game not available')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => GameCardScreen(gameId: game.id!),
       ),
     );
   }
