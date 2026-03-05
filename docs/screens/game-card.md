@@ -21,3 +21,4 @@ All deeper interactions originate here.
 
 - Implemented as a full-screen detail page.
 - Notes/Guides/Achievements panels are mocked until data is wired.
+- Launch uses RetroArch when configured (see README).

@@ -58,3 +58,14 @@ Automatically import games from your ROM/game directories:
 6. Click "Scan & Import"
 
 Clair will scan for game files and add them to your library. Use "Refresh" to detect new or removed games.
+
+### RetroArch Setup (Play Flow)
+
+To launch games, configure RetroArch:
+
+1. Install RetroArch for your platform
+2. Open Settings → RetroArch Configuration
+3. Set `RETROARCH_PATH` (RetroArch executable path)
+4. Set `RETROARCH_CORES_PATH` (RetroArch cores folder)
+
+**Supported systems (v1):** NES, SNES, GB, GBC, GBA, PS1
