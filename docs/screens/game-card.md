@@ -16,3 +16,8 @@ The Game Card also shows relevant context such as:
 - Associated notes or guides
 
 All deeper interactions originate here.
+
+## Implementation Status
+
+- Implemented as a full-screen detail page.
+- Notes/Guides/Achievements panels are mocked until data is wired.
