@@ -27,7 +27,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -63,7 +63,8 @@ class DatabaseService {
         name TEXT NOT NULL,
         description TEXT,
         createdDate INTEGER NOT NULL,
-        gameCount INTEGER NOT NULL DEFAULT 0
+        gameCount INTEGER NOT NULL DEFAULT 0,
+        coverPath TEXT
       )
     ''');
 
@@ -157,6 +158,10 @@ class DatabaseService {
       // Add new columns to games table
       await db.execute('ALTER TABLE games ADD COLUMN source_directory_id INTEGER');
       await db.execute('ALTER TABLE games ADD COLUMN file_status INTEGER DEFAULT 0');
+    }
+
+    if (oldVersion < 4) {
+      await db.execute('ALTER TABLE collections ADD COLUMN coverPath TEXT');
     }
   }
 
@@ -324,6 +329,19 @@ class DatabaseService {
       orderBy: 'name ASC',
     );
     return maps.map((map) => Collection.fromMap(map)).toList();
+  }
+
+  /// Get a single collection by ID
+  Future<Collection?> getCollection(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'collections',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (maps.isEmpty) return null;
+    return Collection.fromMap(maps.first);
   }
 
   /// Update a collection

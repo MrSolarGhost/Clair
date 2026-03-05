@@ -5,6 +5,7 @@ class Collection {
   final String? description;
   final DateTime createdDate;
   final int gameCount;
+  final String? coverPath;
 
   Collection({
     this.id,
@@ -12,6 +13,7 @@ class Collection {
     this.description,
     DateTime? createdDate,
     this.gameCount = 0,
+    this.coverPath,
   }) : createdDate = createdDate ?? DateTime.now();
 
   /// Convert Collection to Map for SQLite storage
@@ -22,6 +24,7 @@ class Collection {
       'description': description,
       'createdDate': createdDate.millisecondsSinceEpoch,
       'gameCount': gameCount,
+      'coverPath': coverPath,
     };
   }
 
@@ -33,6 +36,7 @@ class Collection {
       description: map['description'] as String?,
       createdDate: DateTime.fromMillisecondsSinceEpoch(map['createdDate'] as int),
       gameCount: map['gameCount'] as int,
+      coverPath: map['coverPath'] as String?,
     );
   }
 
@@ -43,6 +47,7 @@ class Collection {
     String? description,
     DateTime? createdDate,
     int? gameCount,
+    String? coverPath,
   }) {
     return Collection(
       id: id ?? this.id,
@@ -50,6 +55,7 @@ class Collection {
       description: description ?? this.description,
       createdDate: createdDate ?? this.createdDate,
       gameCount: gameCount ?? this.gameCount,
+      coverPath: coverPath ?? this.coverPath,
     );
   }
 }
