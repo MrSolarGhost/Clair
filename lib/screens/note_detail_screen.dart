@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/note.dart';
 
 class NoteDetailScreen extends StatefulWidget {
@@ -19,6 +22,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   late TextEditingController _contentController;
   late bool _isPinned;
   late List<String> _tags;
+  late ScrollController _scrollController;
+  Timer? _scrollSaveTimer;
   bool _isEditing = false;
 
   @override
@@ -28,10 +33,15 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     _contentController = TextEditingController(text: widget.note.content);
     _isPinned = widget.note.isPinned;
     _tags = List.from(widget.note.tags);
+    _scrollController = ScrollController();
+    _scrollController.addListener(_handleScroll);
+    _restoreScrollOffset();
   }
 
   @override
   void dispose() {
+    _scrollSaveTimer?.cancel();
+    _scrollController.dispose();
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
@@ -261,6 +271,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     return Container(
       color: const Color(0xFF0D0D0D),
       child: SingleChildScrollView(
+        controller: _scrollController,
         padding: const EdgeInsets.all(48),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -297,6 +308,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     return Container(
       color: const Color(0xFF0D0D0D),
       child: SingleChildScrollView(
+        controller: _scrollController,
         padding: const EdgeInsets.all(48),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -346,6 +358,41 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         ),
       ),
     );
+  }
+
+  String? get _scrollKey {
+    final id = widget.note.id;
+    if (id == null) return null;
+    return 'notes.scroll.$id';
+  }
+
+  Future<void> _restoreScrollOffset() async {
+    final key = _scrollKey;
+    if (key == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getDouble(key) ?? 0.0;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      final max = _scrollController.position.maxScrollExtent;
+      final target = saved.clamp(0.0, max);
+      if (target > 0) {
+        _scrollController.jumpTo(target);
+      }
+    });
+  }
+
+  void _handleScroll() {
+    final key = _scrollKey;
+    if (key == null) return;
+    final offset = _scrollController.offset;
+
+    _scrollSaveTimer?.cancel();
+    _scrollSaveTimer = Timer(const Duration(milliseconds: 200), () async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble(key, offset);
+    });
   }
 
   Color _getColorForNote() {
