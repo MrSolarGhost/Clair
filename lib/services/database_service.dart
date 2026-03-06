@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/game.dart';
@@ -22,8 +24,9 @@ class DatabaseService {
 
   /// Initialize the database
   Future<Database> _initDatabase() async {
+    final isTest = Platform.environment.containsKey('FLUTTER_TEST');
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'clair.db');
+    final path = isTest ? inMemoryDatabasePath : join(dbPath, 'clair.db');
 
     return await openDatabase(
       path,
@@ -541,9 +544,11 @@ class DatabaseService {
     );
   }
 
-  /// Close the database
+  /// Close the database (useful for tests)
   Future<void> close() async {
-    final db = await database;
-    await db.close();
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+    }
   }
 }

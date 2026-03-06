@@ -27,6 +27,10 @@ void main() {
       await db.delete('games');
     });
 
+    tearDown(() async {
+      await dbService.close();
+    });
+
     test('addDirectory validates path exists', () async {
       expect(
         () => service.addDirectory('/nonexistent/path', 'PS Vita', false),

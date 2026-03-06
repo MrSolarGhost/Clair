@@ -20,6 +20,10 @@ void main() {
       await db.delete('games');
     });
 
+    tearDown(() async {
+      await dbService.close();
+    });
+
     test('insertLibraryDirectory saves and returns directory with id', () async {
       final dir = LibraryDirectory(
         path: '/test/roms/vita',
