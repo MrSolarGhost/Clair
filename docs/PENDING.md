@@ -23,13 +23,15 @@
 - Provide ROM fixtures for smoke tests.
 
 ## Cover Fetch Tests
-- CoverStorageService tests rely on network; consider stubbing network or using local fixtures.
+- CoverStorageService tests now use MockClient (no network). Consider adding fixture-based success coverage if needed.
 
 ## Other App Modules (Doc vs Implementation)
 - Home widgets (Continue Playing / Tonight’s Pick)
-- Collections persistence + artwork
 - Notes persistence (restore scroll/cursor)
 - Guides persistence (resume position)
 - Achievements integration (RetroAchievements/Steam/GOG/Epic)
 - Friends snapshot + QR import/export
 - Profile customization + snapshot
+
+## Completed
+- Collections persistence + artwork
