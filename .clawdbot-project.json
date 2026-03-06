@@ -1,0 +1,25 @@
+{
+  "type": "flutter",
+  "name": "Clair",
+  "root": "/home/solarghost/Code/Clair",
+  "main": "lib/main.dart",
+  "sdk": {
+    "dart": ">=3.6.0"
+  },
+  "platforms": ["android", "ios", "linux", "macos", "windows"],
+  "dependencies": {
+    "state": "provider",
+    "storage": ["sqflite", "shared_preferences"],
+    "integrations": ["gamepads", "url_launcher", "file_picker"],
+    "network": "http"
+  },
+  "commands": {
+    "pub_get": "flutter pub get",
+    "run": "flutter run",
+    "test": "flutter test",
+    "analyze": "flutter analyze"
+  },
+  "notes": {
+    "description": "Controller-first game frontend with local SQLite persistence."
+  }
+}
