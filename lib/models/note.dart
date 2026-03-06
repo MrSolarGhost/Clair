@@ -19,7 +19,7 @@ class Note {
     this.gameTitle,
     this.tags = const [],
     this.isPinned = false,
-    required this.createdDate,
+    required this.createdAt,
     required this.updatedAt,
   });
 
@@ -51,7 +51,7 @@ class Note {
           ? (map['tags'] as String).split(',')
           : [],
       isPinned: map['isPinned'] == 1,
-      createdDate: DateTime.parse(map['createdAt'] as String),
+      createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
     );
   }
@@ -75,7 +75,7 @@ class Note {
       gameTitle: gameTitle ?? this.gameTitle,
       tags: tags ?? this.tags,
       isPinned: isPinned ?? this.isPinned,
-      createdDate: createdAt ?? this.createdDate,
+      createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
