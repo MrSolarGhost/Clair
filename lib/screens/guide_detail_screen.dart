@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/guide.dart';
 
 class GuideDetailScreen extends StatefulWidget {
@@ -18,27 +21,20 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
   late int _currentPage;
   late double _scrollPosition;
   final ScrollController _scrollController = ScrollController();
+  Timer? _scrollSaveTimer;
 
   @override
   void initState() {
     super.initState();
     _currentPage = widget.guide.currentPage;
     _scrollPosition = widget.guide.scrollPosition;
-
-    // Set initial scroll position for text guides
-    if (widget.guide.type == GuideType.text) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.jumpTo(
-            _scrollController.position.maxScrollExtent * _scrollPosition,
-          );
-        }
-      });
-    }
+    _scrollController.addListener(_handleScroll);
+    _restoreScrollOffset();
   }
 
   @override
   void dispose() {
+    _scrollSaveTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -552,6 +548,59 @@ Thank you for reading this guide. For more information, visit the official resou
       case GuideSource.other:
         return 'Web';
     }
+  }
+
+  String? get _scrollKey {
+    if (widget.guide.type != GuideType.text) return null;
+    final id = widget.guide.id;
+    if (id == null) return null;
+    return 'guides.scroll.$id';
+  }
+
+  Future<void> _restoreScrollOffset() async {
+    final key = _scrollKey;
+    if (key == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getDouble(key) ?? 0.0;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      final max = _scrollController.position.maxScrollExtent;
+      final target = saved.clamp(0.0, max);
+      if (max > 0) {
+        _scrollPosition = target / max;
+      } else {
+        _scrollPosition = 0.0;
+      }
+      if (target > 0) {
+        _scrollController.jumpTo(target);
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _handleScroll() {
+    final key = _scrollKey;
+    if (key == null || !_scrollController.hasClients) return;
+
+    final max = _scrollController.position.maxScrollExtent;
+    if (max > 0) {
+      _scrollPosition = (_scrollController.offset / max).clamp(0.0, 1.0);
+    } else {
+      _scrollPosition = 0.0;
+    }
+
+    _scrollSaveTimer?.cancel();
+    _scrollSaveTimer = Timer(const Duration(milliseconds: 200), () async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble(key, _scrollController.offset);
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   String _getProgressText() {

@@ -27,11 +27,11 @@
 
 ## Other App Modules (Doc vs Implementation)
 - Home widgets (Continue Playing / Tonight’s Pick)
-- Guides persistence (resume position)
 - Achievements integration (RetroAchievements/Steam/GOG/Epic)
 - Friends snapshot + QR import/export
 - Profile customization + snapshot
 
 ## Completed
 - Collections persistence + artwork
+- Guides persistence (resume position)
 - Notes persistence (scroll position)

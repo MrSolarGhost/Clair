@@ -6,6 +6,7 @@ Features:
 - Import guides and associate them with a game
 - Multiple guides per game
 - Resume last opened guide and last position
+- Restore per-guide scroll position for text guides
 - Access guides directly from the Game Card
 
 Guides are meant to reduce context switching while playing.
